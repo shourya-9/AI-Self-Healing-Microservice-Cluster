@@ -1,7 +1,7 @@
-fastapi
-uvicorn
-prometheus-client
-requests
-docker
-scikit-learn
-numpy
+fastapi==0.115.5
+uvicorn[standard]==0.32.1
+prometheus-client==0.21.0
+requests==2.32.3
+docker==7.1.0
+scikit-learn==1.5.2
+numpy==1.26.4

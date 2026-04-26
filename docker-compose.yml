@@ -4,6 +4,8 @@ services:
     ports:
       - "8001:8000"
     restart: always
+    environment:
+      - LOG_LEVEL=INFO
 
   order-service:
     build: ./services/order-service
@@ -12,6 +14,9 @@ services:
     depends_on:
       - auth-service
     restart: always
+    environment:
+      - AUTH_SERVICE_URL=http://auth-service:8000
+      - LOG_LEVEL=INFO
 
   prometheus:
     image: prom/prometheus
@@ -27,6 +32,12 @@ services:
       - "3000:3000"
     volumes:
       - grafana-data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+      - ./monitoring/grafana/dashboards:/etc/grafana/dashboards
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/etc/grafana/dashboards/ai-self-healing.json
     restart: always
 
   ai-orchestrator:
@@ -39,6 +50,31 @@ services:
       - prometheus
       - auth-service
     restart: always
+    environment:
+      - PROMETHEUS_URL=http://prometheus:9090
+      - CHECK_INTERVAL=5
+      - TRAINING_DURATION_SECONDS=120
+      - CONTAMINATION=0.1
+      - STABILIZATION_SECONDS=20
+      - COOLDOWN_SECONDS=30
+      - MAX_RESTARTS_PER_WINDOW=3
+      - WINDOW_RESET_SECONDS=120
+      - MAX_TRAINING_SAMPLES=1000
+      - N_ESTIMATORS=200
+      - LOG_LEVEL=INFO
+
+  control-server:
+    build: ./control-server
+    ports:
+      - "8004:8004"
+    restart: always
+    environment:
+      - AUTH_SERVICE_URL=http://auth-service:8000
+      - ORDER_SERVICE_URL=http://order-service:8000
+      - REQUEST_TIMEOUT=5
+      # Set ALLOWED_ORIGINS to your frontend URL in production
+      - ALLOWED_ORIGINS=http://localhost,http://localhost:3000,http://127.0.0.1
+      - LOG_LEVEL=INFO
 
 volumes:
   grafana-data:

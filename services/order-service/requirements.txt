@@ -1,4 +1,4 @@
-fastapi
-uvicorn
-requests
-prometheus-client
+fastapi==0.115.5
+uvicorn[standard]==0.32.1
+requests==2.32.3
+prometheus-client==0.21.0
