@@ -96,6 +96,8 @@ def start_order_traffic() -> dict:
     """Start the order traffic generator in a background thread."""
     global order_traffic
     with _traffic_lock:
+        if order_traffic:
+            return {"status": "order traffic already running"}
         order_traffic = True
     threading.Thread(target=order_generator, daemon=True, name="order-traffic").start()
     logger.info("Order traffic started.")
@@ -117,6 +119,8 @@ def start_auth_traffic() -> dict:
     """Start the auth traffic generator in a background thread."""
     global auth_traffic
     with _traffic_lock:
+        if auth_traffic:
+            return {"status": "auth traffic already running"}
         auth_traffic = True
     threading.Thread(target=auth_generator, daemon=True, name="auth-traffic").start()
     logger.info("Auth traffic started.")
