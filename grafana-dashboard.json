@@ -83,7 +83,7 @@
           "custom": {
             "lineWidth": 2,
             "fillOpacity": 15,
-            "gradientMode": "opacity",
+            "gradientMode": "scheme",
             "spanNulls": true,
             "showPoints": "never"
           }
@@ -153,7 +153,7 @@
           "custom": {
             "lineWidth": 2,
             "fillOpacity": 15,
-            "gradientMode": "opacity",
+            "gradientMode": "scheme",
             "spanNulls": true,
             "showPoints": "never"
           }
@@ -489,7 +489,7 @@
     },
     {
       "id": 6,
-      "type": "timeseries",
+      "type": "stat",
       "title": "Healing Attempts",
       "datasource": {
         "type": "prometheus",
@@ -502,28 +502,34 @@
         "h": 8
       },
       "options": {
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": ""
         },
-        "legend": {
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        }
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center"
       },
       "fieldConfig": {
         "defaults": {
           "unit": "short",
           "color": {
-            "mode": "palette-classic"
+            "mode": "fixed",
+            "fixedColor": "semi-dark-blue"
           },
-          "custom": {
-            "lineWidth": 2,
-            "fillOpacity": 12,
-            "gradientMode": "opacity",
-            "spanNulls": true,
-            "showPoints": "never"
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "semi-dark-blue",
+                "value": null
+              }
+            ]
           }
         },
         "overrides": []
@@ -535,14 +541,14 @@
             "uid": "prometheus"
           },
           "expr": "healing_attempts_total",
-          "legendFormat": "attempts",
+          "legendFormat": "Attempts",
           "refId": "A"
         }
       ]
     },
     {
       "id": 7,
-      "type": "timeseries",
+      "type": "stat",
       "title": "Healing Success Count",
       "datasource": {
         "type": "prometheus",
@@ -555,28 +561,34 @@
         "h": 8
       },
       "options": {
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": ""
         },
-        "legend": {
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        }
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center"
       },
       "fieldConfig": {
         "defaults": {
           "unit": "short",
           "color": {
-            "mode": "palette-classic"
+            "mode": "fixed",
+            "fixedColor": "green"
           },
-          "custom": {
-            "lineWidth": 2,
-            "fillOpacity": 12,
-            "gradientMode": "opacity",
-            "spanNulls": true,
-            "showPoints": "never"
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
           }
         },
         "overrides": []
@@ -588,14 +600,14 @@
             "uid": "prometheus"
           },
           "expr": "healing_success_total",
-          "legendFormat": "successes",
+          "legendFormat": "Successes",
           "refId": "A"
         }
       ]
     },
     {
       "id": 8,
-      "type": "timeseries",
+      "type": "stat",
       "title": "Healing Failures",
       "datasource": {
         "type": "prometheus",
@@ -608,28 +620,37 @@
         "h": 8
       },
       "options": {
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": ""
         },
-        "legend": {
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        }
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center"
       },
       "fieldConfig": {
         "defaults": {
           "unit": "short",
           "color": {
-            "mode": "palette-classic"
+            "mode": "thresholds"
           },
-          "custom": {
-            "lineWidth": 2,
-            "fillOpacity": 12,
-            "gradientMode": "opacity",
-            "spanNulls": true,
-            "showPoints": "never"
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
           }
         },
         "overrides": []
@@ -641,7 +662,7 @@
             "uid": "prometheus"
           },
           "expr": "healing_failures_total",
-          "legendFormat": "failures",
+          "legendFormat": "Failures",
           "refId": "A"
         }
       ]
@@ -807,7 +828,7 @@
     },
     {
       "id": 12,
-      "type": "timeseries",
+      "type": "state-timeline",
       "title": "Incident & Escalation History",
       "datasource": {
         "type": "prometheus",
@@ -819,35 +840,109 @@
         "w": 24,
         "h": 7
       },
-      "description": "Shows when incidents were active and when escalations occurred. Spikes indicate self-healing events.",
+      "description": "Coloured bands show when incidents and escalations were active. Each row is a separate signal.",
       "options": {
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        },
+        "mergeValues": true,
+        "showValue": "auto",
+        "alignValue": "left",
+        "rowHeight": 0.85,
         "legend": {
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
         }
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "short",
-          "min": 0,
-          "max": 1.2,
           "color": {
-            "mode": "palette-classic"
+            "mode": "thresholds"
           },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "OK",
+                  "color": "green",
+                  "index": 0
+                },
+                "1": {
+                  "text": "ACTIVE",
+                  "color": "red",
+                  "index": 1
+                }
+              }
+            }
+          ],
           "custom": {
-            "lineWidth": 2,
-            "fillOpacity": 30,
-            "gradientMode": "opacity",
-            "spanNulls": true,
-            "showPoints": "never"
+            "lineWidth": 1,
+            "fillOpacity": 75,
+            "spanNulls": false
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Escalated"
+            },
+            "properties": [
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "orange",
+                      "value": 1
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "0": {
+                        "text": "OK",
+                        "color": "green",
+                        "index": 0
+                      },
+                      "1": {
+                        "text": "ESCALATED",
+                        "color": "orange",
+                        "index": 1
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       },
       "targets": [
         {
@@ -855,7 +950,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "active_incident",
+          "expr": "max_over_time(active_incident[2m])",
           "legendFormat": "Active Incident",
           "refId": "A"
         },
@@ -864,18 +959,9 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "incident_escalated",
+          "expr": "max_over_time(incident_escalated[5m])",
           "legendFormat": "Escalated",
           "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "expr": "increase(healing_attempts_total[1m])",
-          "legendFormat": "Healing Attempts / min",
-          "refId": "C"
         }
       ]
     }
