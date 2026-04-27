@@ -1,4 +1,4 @@
-# ⚡ AI Self-Healing Microservice Cluster
+# ⚡ AI Self-Healing Microservice Recovery Platform
 
 An AI-powered autonomous system that detects latency anomalies in microservices using machine learning and self-heals in real time — without any human intervention.
 
